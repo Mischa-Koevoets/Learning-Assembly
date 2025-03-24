@@ -3,6 +3,7 @@ prompt1: .asciz "Please type a number\n"
 prompt2: .asciz "Please type another number\n"
 input1: .asciz "%Id"
 input2: .asciz "%Id2"
+output: .asciz "Result: %Id3\n"
 
 
 .global main
@@ -26,21 +27,25 @@ pow:
     movq $prompt1, %rdi
     call printf
 
+#read num1
     subq $16, %rsp
     movq $0, %rax
     movq $input1, %rdi
-    leaq -16(%rbp), %rsi
     call scanf
 
     movq -16(%rbp), %rsi
 
-#This shit below WILL NOT work (i think) because of memory stuff
+#read num2
     subq $16, %rsp
     movq $0, %rax
     movq $input2, %rdi
-    leaq -16(%rbp)
     call scanf
-    movq -16(%rbp), %rsi
 
+    movq -24(%rbp), %rdx
 
-    
+#do num1^num2
+    movq $1, %rax
+    loop:
+           
+        
+    end:
