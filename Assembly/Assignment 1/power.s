@@ -1,9 +1,13 @@
 .text
 prompt1: .asciz "Please type a number\n"
 prompt2: .asciz "Please type another number\n"
-input1: .asciz "%Id"
-input2: .asciz "%Id2"
-output: .asciz "Result: %Id3\n"
+input_format: .asciz "%Id"
+output: .asciz "Result: %Id\n"
+
+.section .bss
+    num1: .space 8
+    num2: .space 8
+
 
 
 .global main
@@ -13,39 +17,48 @@ main:
     pushq %rbp
     movq %rsp, %rbp
 
+    movq $0, %rax
+    movq $prompt1, %rdi
+    call printf
+
+    movq $input_format, %rdi
+    movq $num1, %rsi
+    call scanf
+
+    movq $0, %rax
+    movq $prompt2, %rdi
+    call printf
+
+    movq $input_format, %rdi
+    movq $num2, %rsi
+    call scanf
+
+    movq num1, %rdi     
+    movq num2, %rsi 
+
     call pow
 
-    movq %rbp, %rsp
-    popq %rbp
+    movq $output, %rdi
+    movq %rax, %rsi      
+    call printf
+
+    movq $0, %rdi
+    call exit
 
 pow:
 
     pushq %rbp
     movq %rsp, %rbp
 
-    movq $0, %rax
-    movq $prompt1, %rdi
-    call printf
+    movq $1, %rax        
+    cmpq $0, %rsi        
+    je done              
 
-#read num1
-    subq $16, %rsp
-    movq $0, %rax
-    movq $input1, %rdi
-    call scanf
+loop:
+    imulq %rdi, %rax     
+    decq %rsi            
+    jnz loop       
 
-    movq -16(%rbp), %rsi
-
-#read num2
-    subq $16, %rsp
-    movq $0, %rax
-    movq $input2, %rdi
-    call scanf
-
-    movq -24(%rbp), %rdx
-
-#do num1^num2
-    movq $1, %rax
-    loop:
-           
-        
-    end:
+done:
+    popq %rbp
+    ret
