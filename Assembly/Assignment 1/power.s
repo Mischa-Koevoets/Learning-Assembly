@@ -1,8 +1,8 @@
 .text
 prompt1: .asciz "Please type a number\n"
 prompt2: .asciz "Please type another number\n"
-input_format: .asciz "%Id"
-output: .asciz "Result: %Id\n"
+input_format: .asciz "%ld"
+output: .asciz "Result: %ld\n"
 
 .section .bss
     num1: .space 8
@@ -33,8 +33,9 @@ main:
     movq $num2, %rsi
     call scanf
 
-    movq num1, %rdi     
-    movq num2, %rsi 
+    movq $num1, %rdi     
+    movq $num2, %rsi 
+    movq %rdi, %rcx
 
     call pow
 
@@ -46,19 +47,15 @@ main:
     call exit
 
 pow:
+    
+    cmpq $1, %rsi        
+    je done        
 
-    pushq %rbp
-    movq %rsp, %rbp
-
-    movq $1, %rax        
-    cmpq $0, %rsi        
-    je done              
-
-loop:
-    imulq %rdi, %rax     
+    imulq %rdi, %rcx
     decq %rsi            
-    jnz loop       
+    jmp pow       
 
 done:
+    movq %rbp, %rsp
     popq %rbp
     ret
